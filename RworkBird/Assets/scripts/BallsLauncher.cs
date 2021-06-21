@@ -3,31 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallsLauncher : MonoBehaviour
+public class BallsLauncher : Ball
 {
-    private Vector3 startDragPosition;
-    private Vector3 endDragPosition;
 
-    private SpriteRenderer spriteRenderer;
-    private LaunchPreview launchPreview;
-
-    [SerializeField]
-    private GameObject greenPrefab;
-
-    [SerializeField]
-    private GameObject bluePrefab;
-
-    [SerializeField]
-    private GameObject redPrefab;
-    int whichball = 0;
-
-
-    private void Awake()
-    { 
-        launchPreview = GetComponent<LaunchPreview>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.color = Color.blue;
-    }
     private void Update()
     {
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) + Vector3.back * -10;
@@ -45,18 +23,14 @@ public class BallsLauncher : MonoBehaviour
             EndDrag();
         }
     }
-
-    private void EndDrag()
+    private void Start()
+    {
+        spriteRenderer.color = Color.blue;
+    }
+    protected override void EndDrag()
     {
         Vector3 direction = endDragPosition - startDragPosition;
         direction.Normalize();
-
-        //  var ball = Instantiate(greenPrefab, transform.position, Quaternion.identity);
-        //  ball.GetComponent<Rigidbody2D>().AddForce(-direction);
-
-
-
-
 
         if (whichball == 0)
         {
@@ -66,7 +40,7 @@ public class BallsLauncher : MonoBehaviour
             whichball++;
             spriteRenderer.color = Color.red;
         }
-        
+
         else if (whichball == 1)
         {
             var redball = Instantiate(redPrefab, transform.position, Quaternion.identity);
@@ -79,7 +53,7 @@ public class BallsLauncher : MonoBehaviour
         {
             var greenball = Instantiate(greenPrefab, transform.position, Quaternion.identity);
             greenball.GetComponent<Rigidbody2D>().AddForce(-direction);
-            whichball=0;
+            whichball = 0;
             spriteRenderer.color = Color.blue;
 
         }
@@ -99,4 +73,7 @@ public class BallsLauncher : MonoBehaviour
         launchPreview.SetStartPoint(transform.position);
     }
 
+    public override void OnCollisionEnter2D(Collision2D other)
+    {
+    }
 }
